@@ -1,0 +1,298 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:TodoApp.Shared.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             xmlns:material="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="TodoApp.Shared.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel">
+
+    <Panel>
+        <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="24,20">
+
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+                <StackPanel Grid.Column="0" Spacing="4">
+                    <TextBlock Text="Task Dashboard" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource AppTextBrush}"/>
+                    <TextBlock Foreground="{DynamicResource AppTextMutedBrush}" FontSize="14">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} tasks total">
+                                <Binding Path="TotalItems"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                    <Button Command="{Binding ToggleSelectModeCommand}"
+                            Classes="ghost" CornerRadius="8" FontSize="13">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <material:MaterialIcon Kind="FormatListChecks" Width="16" Height="16"
+                                                   Foreground="{DynamicResource AppTextBrush}"/>
+                            <TextBlock Text="Select" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Content="+ New Task" Command="{Binding AddNewTaskCommand}"
+                            Classes="primary" FontSize="14"/>
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Row="1" Background="{DynamicResource AppCardBrush}" CornerRadius="12" Padding="16" Margin="0,0,0,12">
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" RowDefinitions="Auto">
+                    <Border Grid.Column="0" Background="{DynamicResource AppSurfaceBrush}" CornerRadius="8" Margin="0,0,12,0"
+                            BorderThickness="0" Padding="12,0,12,0">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <material:MaterialIcon Kind="Magnify" Width="20" Height="20"
+                                                   Foreground="{DynamicResource AppTextHintBrush}"
+                                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBox Grid.Column="1" Text="{Binding SearchQuery, Mode=TwoWay}"
+                                     Watermark="Search tasks..." Padding="8,8,12,8"
+                                     FontSize="14" Background="Transparent" BorderThickness="0"/>
+                        </Grid>
+                    </Border>
+
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding StatusFilterOptions}"
+                              SelectedItem="{Binding FilterStatus}"
+                              PlaceholderText="Status" Width="130" Padding="8"
+                              CornerRadius="8" Margin="0,0,8,0" FontSize="13"/>
+
+                    <ComboBox Grid.Column="2" ItemsSource="{Binding PriorityFilterOptions}"
+                              SelectedItem="{Binding FilterPriority}"
+                              PlaceholderText="Priority" Width="130" Padding="8"
+                              CornerRadius="8" Margin="0,0,8,0" FontSize="13"/>
+
+                    <ComboBox Grid.Column="3" ItemsSource="{Binding SortOptions}"
+                              SelectedItem="{Binding SortBy}"
+                              Width="140" Padding="8"
+                              CornerRadius="8" Margin="0,0,8,0" FontSize="13"/>
+
+                    <Button Grid.Column="4" Content="Clear" Command="{Binding ClearFiltersCommand}"
+                            Classes="ghost" CornerRadius="8" FontSize="13"/>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="1" Background="{DynamicResource BulkBarBrush}" CornerRadius="8" Padding="12,8"
+                    Margin="0,60,0,0" IsVisible="{Binding IsSelectMode}"
+                    HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="Bulk:" Foreground="{DynamicResource AppTextSecondaryBrush}" VerticalAlignment="Center" FontSize="13" Margin="0,0,4,0"/>
+                    <Button Content="Delete Selected" Command="{Binding BulkDeleteCommand}"
+                            Classes="danger" FontSize="12" Padding="10,6"/>
+                    <Button Content="Set High" Command="{Binding BulkSetPriorityCommand}" CommandParameter="High"
+                            Background="#3d1b1b" Foreground="#f44336" CornerRadius="8" FontSize="12" Padding="10,6"/>
+                    <Button Content="Set Medium" Command="{Binding BulkSetPriorityCommand}" CommandParameter="Medium"
+                            Background="#3d2d1b" Foreground="#ff9800" CornerRadius="8" FontSize="12" Padding="10,6"/>
+                    <Button Content="Set Low" Command="{Binding BulkSetPriorityCommand}" CommandParameter="Low"
+                            Background="#1b3d1b" Foreground="#4caf50" CornerRadius="8" FontSize="12" Padding="10,6"/>
+                    <Button Content="Cancel" Command="{Binding ToggleSelectModeCommand}"
+                            Classes="ghost" FontSize="12" Padding="10,6"/>
+                </StackPanel>
+            </Border>
+
+            <Panel Grid.Row="2">
+                <TextBlock Text="Loading tasks..." IsVisible="{Binding IsLoading}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="{DynamicResource AppTextMutedBrush}" FontSize="16"/>
+
+                <StackPanel IsVisible="{Binding ShowEmptyState}" HorizontalAlignment="Center"
+                            VerticalAlignment="Center" Spacing="12">
+                    <material:MaterialIcon Kind="ClipboardTextOutline" Width="48" Height="48"
+                                           HorizontalAlignment="Center" Foreground="{DynamicResource AppTextMutedBrush}"/>
+                    <TextBlock Text="No tasks yet" FontSize="20" Foreground="{DynamicResource AppTextBrush}" FontWeight="SemiBold"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Click '+ New Task' to get started" FontSize="14"
+                               Foreground="{DynamicResource AppTextMutedBrush}" HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <ScrollViewer IsVisible="{Binding !IsLoading}">
+                    <ItemsControl ItemsSource="{Binding Tasks}" Margin="0,4">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:TodoItemViewModel">
+                                <Border Classes="taskCard" Margin="0,3"
+                                        Classes.overdueTask="{Binding IsOverdue}">
+                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}"
+                                                  IsVisible="{Binding $parent[ItemsControl].((vm:DashboardViewModel)DataContext).IsSelectMode}"
+                                                  VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                                        <Button Grid.Column="0"
+                                                Command="{Binding ToggleStatusCommand}"
+                                                IsVisible="{Binding !$parent[ItemsControl].((vm:DashboardViewModel)DataContext).IsSelectMode}"
+                                                Background="Transparent" Padding="4" VerticalAlignment="Center" Margin="0,0,12,0">
+                                            <material:MaterialIcon Kind="{Binding StatusIconKind}" Width="22" Height="22"
+                                                                   Foreground="{Binding Item.Status, Converter={StaticResource PriorityToColorConverter}}"/>
+                                        </Button>
+
+                                        <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Item.Title}" FontSize="15"
+                                                       FontWeight="SemiBold" Foreground="{DynamicResource AppTextBrush}"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Item.Description}" FontSize="12"
+                                                       Foreground="{DynamicResource AppTextMutedBrush}" TextTrimming="CharacterEllipsis"
+                                                       MaxLines="1"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                                <TextBlock FontSize="11" Foreground="{DynamicResource AppTextCaptionBrush}">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="Due: {0:MMM dd}">
+                                                            <Binding Path="Item.DueDate"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <Border Grid.Column="2" CornerRadius="6" Padding="8,4"
+                                                Background="{Binding Item.Priority, Converter={StaticResource PriorityToColorConverter}}"
+                                                VerticalAlignment="Center" Margin="8,0" Opacity="0.2">
+                                            <TextBlock Text="{Binding PriorityLabel}" FontSize="11"
+                                                       Foreground="{Binding Item.Priority, Converter={StaticResource PriorityToColorConverter}}"
+                                                       FontWeight="SemiBold"/>
+                                        </Border>
+
+                                        <Border Grid.Column="3" CornerRadius="6" Padding="8,4"
+                                                Background="{DynamicResource AppCardHoverBrush}" VerticalAlignment="Center" Margin="0,0,8,0">
+                                            <TextBlock Text="{Binding Item.Status}" FontSize="11"
+                                                       Foreground="{DynamicResource AppTextHintBrush}" FontWeight="Medium"/>
+                                        </Border>
+
+                                        <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="2"
+                                                    VerticalAlignment="Center" Margin="0,0,4,0">
+                                            <Button Command="{Binding MoveTopCommand}"
+                                                    Classes="ghost" Padding="6,4"
+                                                    ToolTip.Tip="Move to top">
+                                                <material:MaterialIcon Kind="ArrowUp" Width="14" Height="14"
+                                                                       Foreground="{DynamicResource AppTextHintBrush}"/>
+                                            </Button>
+                                            <Button Command="{Binding MoveBottomCommand}"
+                                                    Classes="ghost" Padding="6,4"
+                                                    ToolTip.Tip="Move to bottom">
+                                                <material:MaterialIcon Kind="ArrowDown" Width="14" Height="14"
+                                                                       Foreground="{DynamicResource AppTextHintBrush}"/>
+                                            </Button>
+                                        </StackPanel>
+
+                                        <Button Grid.Column="5"
+                                                Command="{Binding EditCommand}"
+                                                Classes="ghost" Padding="8,4"
+                                                VerticalAlignment="Center"
+                                                ToolTip.Tip="Edit task">
+                                            <material:MaterialIcon Kind="Pencil" Width="18" Height="18"
+                                                                   Foreground="{DynamicResource AppTextHintBrush}"/>
+                                        </Button>
+
+                                        <Button Grid.Column="6"
+                                                Command="{Binding DeleteCommand}"
+                                                Background="Transparent" Padding="8,4"
+                                                VerticalAlignment="Center"
+                                                ToolTip.Tip="Delete task">
+                                            <material:MaterialIcon Kind="Delete" Width="18" Height="18"
+                                                                   Foreground="{DynamicResource DangerBrush}"/>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Panel>
+
+            <Border Grid.Row="3" Margin="0,12,0,0">
+                <Grid ColumnDefinitions="*,Auto,*">
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                        <Button Command="{Binding PreviousPageCommand}"
+                                Classes="ghost" CornerRadius="8" FontSize="13">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <material:MaterialIcon Kind="ChevronLeft" Width="16" Height="16"
+                                                       Foreground="{DynamicResource AppTextBrush}"/>
+                                <TextBlock Text="Prev" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource AppTextHintBrush}" FontSize="14">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="Page {0} of {1}">
+                                    <Binding Path="CurrentPage"/>
+                                    <Binding Path="TotalPages"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <Button Command="{Binding NextPageCommand}"
+                                Classes="ghost" CornerRadius="8" FontSize="13">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="Next" VerticalAlignment="Center"/>
+                                <material:MaterialIcon Kind="ChevronRight" Width="16" Height="16"
+                                                       Foreground="{DynamicResource AppTextBrush}"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Border IsVisible="{Binding ShowUndoBar}"
+                Background="{DynamicResource UndoBarBrush}" CornerRadius="8" Padding="16,10"
+                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                Margin="0,0,0,24" BoxShadow="0 4 16 0 #40000000">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <TextBlock Text="{Binding UndoMessage}" Foreground="White" FontSize="14" VerticalAlignment="Center"/>
+                <Button Content="Undo" Command="{Binding UndoDeleteCommand}"
+                        Classes="primary" Padding="12,6"
+                        CornerRadius="6" FontSize="13" FontWeight="SemiBold"/>
+            </StackPanel>
+        </Border>
+
+        <Border IsVisible="{Binding ShowEditor}" Background="{DynamicResource ModalOverlayBrush}">
+            <Border Background="{DynamicResource AppSurfaceBrush}" CornerRadius="16" Padding="32"
+                    Width="480" MaxHeight="600"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    BoxShadow="0 8 32 0 #60000000">
+                <StackPanel Spacing="16" DataContext="{Binding EditorViewModel}"
+                            x:DataType="vm:TaskEditorViewModel">
+                    <TextBlock Text="{Binding DialogTitle}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource AppTextBrush}"/>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Title" FontSize="13" Foreground="{DynamicResource AppTextHintBrush}"/>
+                        <TextBox Text="{Binding Title, Mode=TwoWay}" Watermark="Task title"
+                                 Padding="12,8" FontSize="14" CornerRadius="8"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Description" FontSize="13" Foreground="{DynamicResource AppTextHintBrush}"/>
+                        <TextBox Text="{Binding Description, Mode=TwoWay}" Watermark="Task description"
+                                 Padding="12,8" FontSize="14" CornerRadius="8"
+                                 AcceptsReturn="True" Height="80" TextWrapping="Wrap"/>
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto">
+                        <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,8,0">
+                            <TextBlock Text="Status" FontSize="13" Foreground="{DynamicResource AppTextHintBrush}"/>
+                            <ComboBox ItemsSource="{Binding StatusOptions}"
+                                      SelectedItem="{Binding Status}" HorizontalAlignment="Stretch"
+                                      Padding="8" CornerRadius="8" FontSize="13"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="4" Margin="8,0,0,0">
+                            <TextBlock Text="Priority" FontSize="13" Foreground="{DynamicResource AppTextHintBrush}"/>
+                            <ComboBox ItemsSource="{Binding PriorityOptions}"
+                                      SelectedItem="{Binding Priority}" HorizontalAlignment="Stretch"
+                                      Padding="8" CornerRadius="8" FontSize="13"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Due Date" FontSize="13" Foreground="{DynamicResource AppTextHintBrush}"/>
+                        <DatePicker SelectedDate="{Binding DueDate}" HorizontalAlignment="Stretch"
+                                    FontSize="14"/>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               IsVisible="{Binding ErrorMessage, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}"
+                               Foreground="{DynamicResource DangerBrush}" FontSize="13"/>
+
+                    <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,8,0,0">
+                        <Button Grid.Column="1" Content="Cancel" Command="{Binding CancelCommand}"
+                                Classes="ghost" Margin="0,0,8,0" CornerRadius="8"
+                                FontSize="14" Padding="16,10"/>
+                        <Button Grid.Column="2" Content="Save" Command="{Binding SaveCommand}"
+                                Classes="primary" FontSize="14"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Border>
+    </Panel>
+</UserControl>

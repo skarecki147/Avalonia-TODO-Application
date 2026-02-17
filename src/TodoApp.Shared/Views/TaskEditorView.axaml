@@ -1,0 +1,7 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:TodoApp.Shared.ViewModels"
+             x:Class="TodoApp.Shared.Views.TaskEditorView"
+             x:DataType="vm:TaskEditorViewModel">
+    <TextBlock Text="Task Editor (embedded in dashboard)" Foreground="Gray"/>
+</UserControl>

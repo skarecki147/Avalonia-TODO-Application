@@ -1,0 +1,148 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:TodoApp.Shared.ViewModels"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             x:Class="TodoApp.Shared.Views.StatisticsView"
+             x:DataType="vm:StatisticsViewModel">
+
+    <ScrollViewer>
+        <StackPanel Margin="24,20" Spacing="20">
+            <TextBlock Text="Statistics &amp; Analytics" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource AppTextBrush}"/>
+            <TextBlock Text="Track your productivity and task progress" FontSize="14" Foreground="{DynamicResource AppTextMutedBrush}" Margin="0,-8,0,0"/>
+
+            <TextBlock Text="Loading statistics..." IsVisible="{Binding IsLoading}"
+                       HorizontalAlignment="Center" Foreground="{DynamicResource AppTextMutedBrush}" FontSize="16" Margin="0,40"/>
+
+            <WrapPanel Orientation="Horizontal" IsVisible="{Binding !IsLoading}">
+                <Border Classes="metricCard" Margin="0,0,12,12" Width="180">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Total Tasks" FontSize="13" Foreground="{DynamicResource AppTextMutedBrush}"/>
+                        <TextBlock Text="{Binding TotalTasks}" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource AppTextBrush}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="metricCard" Margin="0,0,12,12" Width="180">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Completed" FontSize="13" Foreground="{DynamicResource AppTextMutedBrush}"/>
+                        <TextBlock Text="{Binding CompletedTasks}" FontSize="32" FontWeight="Bold" Foreground="#4caf50"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="metricCard" Margin="0,0,12,12" Width="180">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="In Progress" FontSize="13" Foreground="{DynamicResource AppTextMutedBrush}"/>
+                        <TextBlock Text="{Binding InProgressTasks}" FontSize="32" FontWeight="Bold" Foreground="#ff9800"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="metricCard" Margin="0,0,12,12" Width="180">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Overdue" FontSize="13" Foreground="{DynamicResource AppTextMutedBrush}"/>
+                        <TextBlock Text="{Binding OverdueTasks}" FontSize="32" FontWeight="Bold" Foreground="#f44336"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="metricCard" Margin="0,0,12,12" Width="180">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Completion Rate" FontSize="13" Foreground="{DynamicResource AppTextMutedBrush}"/>
+                        <TextBlock FontSize="32" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}%">
+                                    <Binding Path="CompletionRate"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="metricCard" Margin="0,0,12,12" Width="180">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Avg. Completion" FontSize="13" Foreground="{DynamicResource AppTextMutedBrush}"/>
+                        <TextBlock FontSize="32" FontWeight="Bold" Foreground="{DynamicResource AppTextSecondaryBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}h">
+                                    <Binding Path="AvgCompletionHours"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+            </WrapPanel>
+
+            <Border Classes="metricCard" IsVisible="{Binding !IsLoading}">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Overall Progress" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource AppTextBrush}"/>
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,4,0,0">
+                        <Border Grid.Column="0" Background="{DynamicResource ProgressTrackBrush}" CornerRadius="6" Height="12">
+                            <Border Background="{DynamicResource AccentBrush}" CornerRadius="6" HorizontalAlignment="Left"
+                                    Width="{Binding CompletionRate, FallbackValue=0}"/>
+                        </Border>
+                        <TextBlock Grid.Column="1" Foreground="{DynamicResource AppTextBrush}" FontSize="13" Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}%">
+                                    <Binding Path="CompletionRate"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*" IsVisible="{Binding !IsLoading}" Margin="0,4,0,0">
+                <Border Grid.Column="0" Classes="metricCard" Margin="0,0,8,0">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Status Distribution" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource AppTextBrush}"/>
+                        <lvc:PieChart Series="{Binding StatusPieSeries}" Height="250"
+                                      LegendPosition="Hidden"/>
+                        <StackPanel Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <Border Width="10" Height="10" CornerRadius="5" Background="#4caf50"/>
+                                <TextBlock Text="Done" Foreground="{DynamicResource AppTextBrush}" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <Border Width="10" Height="10" CornerRadius="5" Background="#ff9800"/>
+                                <TextBlock Text="In Progress" Foreground="{DynamicResource AppTextBrush}" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <Border Width="10" Height="10" CornerRadius="5" Background="#2196f3"/>
+                                <TextBlock Text="Todo" Foreground="{DynamicResource AppTextBrush}" FontSize="12"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Classes="metricCard" Margin="8,0,0,0">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Priority Distribution" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource AppTextBrush}"/>
+                        <lvc:PieChart Series="{Binding PriorityPieSeries}" Height="250"
+                                      LegendPosition="Hidden"/>
+                        <StackPanel Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <Border Width="10" Height="10" CornerRadius="5" Background="#f44336"/>
+                                <TextBlock Text="High" Foreground="{DynamicResource AppTextBrush}" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <Border Width="10" Height="10" CornerRadius="5" Background="#ff9800"/>
+                                <TextBlock Text="Medium" Foreground="{DynamicResource AppTextBrush}" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <Border Width="10" Height="10" CornerRadius="5" Background="#4caf50"/>
+                                <TextBlock Text="Low" Foreground="{DynamicResource AppTextBrush}" FontSize="12"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Classes="metricCard" IsVisible="{Binding !IsLoading}">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Weekly Activity" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource AppTextBrush}"/>
+                    <lvc:CartesianChart Series="{Binding WeeklyBarSeries}"
+                                        XAxes="{Binding WeeklyXAxes}"
+                                        YAxes="{Binding WeeklyYAxes}"
+                                        Height="220"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

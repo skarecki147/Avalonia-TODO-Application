@@ -1,0 +1,96 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:TodoApp.Shared.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             xmlns:material="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="TodoApp.Shared.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+
+    <Design.DataContext>
+        <vm:LoginViewModel/>
+    </Design.DataContext>
+
+    <Border Background="{DynamicResource AppPageBackgroundBrush}" CornerRadius="0">
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
+            <Border Background="{DynamicResource AppSurfaceBrush}" CornerRadius="16" Padding="48" BoxShadow="0 8 32 0 #40000000">
+                <StackPanel Spacing="20">
+                    <StackPanel Spacing="4" Margin="0,0,0,12">
+                        <TextBlock Text="&#x2713;" FontSize="48" Foreground="{DynamicResource AccentBrush}"
+                                   HorizontalAlignment="Center" FontWeight="Bold"/>
+                        <TextBlock Text="Sew's TODO"
+                                   FontSize="26" FontWeight="Bold" Foreground="{DynamicResource AppTextBrush}"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Sign in to manage your tasks"
+                                   FontSize="14" Foreground="{DynamicResource AppTextMutedBrush}"
+                                   HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Username" FontSize="13" Foreground="{DynamicResource AppTextHintBrush}" FontWeight="Medium"/>
+                        <TextBox Text="{Binding Username, Mode=TwoWay}"
+                                 Watermark="Enter your username"
+                                 Padding="12,10" FontSize="14"
+                                 CornerRadius="8"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Password" FontSize="13" Foreground="{DynamicResource AppTextHintBrush}" FontWeight="Medium"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding Password, Mode=TwoWay}"
+                                     PasswordChar="{Binding ShowPassword, Converter={StaticResource PasswordCharConverter}}"
+                                     Watermark="Enter your password"
+                                     Padding="12,10" FontSize="14"
+                                     CornerRadius="8"/>
+                            <Button Grid.Column="1"
+                                    Command="{Binding TogglePasswordVisibilityCommand}"
+                                    Background="Transparent" Margin="8,0,0,0" VerticalAlignment="Center"
+                                    Padding="8,6" ToolTip.Tip="Toggle password visibility">
+                                <Panel>
+                                    <material:MaterialIcon Kind="EyeOff" Width="22" Height="22"
+                                                           Foreground="{DynamicResource AppTextHintBrush}"
+                                                           IsVisible="{Binding ShowPassword, Converter={x:Static conv:BoolConverters.Not}}"/>
+                                    <material:MaterialIcon Kind="Eye" Width="22" Height="22"
+                                                           Foreground="{DynamicResource AppTextHintBrush}"
+                                                           IsVisible="{Binding ShowPassword}"/>
+                                </Panel>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+
+                    <CheckBox IsChecked="{Binding RememberMe}" Foreground="{DynamicResource AppTextHintBrush}" FontSize="13">
+                        <TextBlock Text="Remember me" Foreground="{DynamicResource AppTextHintBrush}"/>
+                    </CheckBox>
+
+                    <Border Background="{DynamicResource ErrorBackgroundBrush}" CornerRadius="8" Padding="12,8"
+                            IsVisible="{Binding ErrorMessage, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}">
+                        <TextBlock Text="{Binding ErrorMessage}"
+                                   Foreground="{DynamicResource DangerBrush}" FontSize="13"
+                                   TextWrapping="Wrap"/>
+                    </Border>
+
+                    <Button Command="{Binding LoginCommand}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            Padding="0,14" FontSize="15" FontWeight="SemiBold"
+                            CornerRadius="8"
+                            Classes="primary">
+                        <Panel>
+                            <TextBlock Text="Sign In" IsVisible="{Binding !IsLoading}"
+                                       Foreground="{DynamicResource AccentForegroundBrush}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Signing in..." IsVisible="{Binding IsLoading}"
+                                       Foreground="{DynamicResource AppTextMutedBrush}"
+                                       HorizontalAlignment="Center"/>
+                        </Panel>
+                    </Button>
+
+                    <TextBlock Text="Use any username. Password requires: 8+ chars, uppercase, number, special char."
+                               FontSize="11" Foreground="{DynamicResource AppTextCaptionBrush}"
+                               TextWrapping="Wrap" HorizontalAlignment="Center"
+                               TextAlignment="Center" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

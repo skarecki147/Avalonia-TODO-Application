@@ -1,0 +1,69 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:TodoApp.Shared"
+             x:Class="TodoApp.Shared.App"
+             RequestedThemeVariant="Dark">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#0f0f23"/>
+                    <SolidColorBrush x:Key="AppPageBackgroundBrush" Color="#1a1a2e"/>
+                    <SolidColorBrush x:Key="AppSurfaceBrush" Color="#16213e"/>
+                    <SolidColorBrush x:Key="AppCardBrush" Color="#16213e"/>
+                    <SolidColorBrush x:Key="AppCardHoverBrush" Color="#1a2744"/>
+                    <SolidColorBrush x:Key="AppTextBrush" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="AppTextSecondaryBrush" Color="#c0c8d8"/>
+                    <SolidColorBrush x:Key="AppTextMutedBrush" Color="#8890a4"/>
+                    <SolidColorBrush x:Key="AppTextHintBrush" Color="#a0aec0"/>
+                    <SolidColorBrush x:Key="AppTextCaptionBrush" Color="#6b7280"/>
+                    <SolidColorBrush x:Key="AccentBrush" Color="#6c63ff"/>
+                    <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="NavInactiveBrush" Color="#1a1a3e"/>
+                    <SolidColorBrush x:Key="GhostHoverBrush" Color="#1a2744"/>
+                    <SolidColorBrush x:Key="DangerBrush" Color="#ff6b6b"/>
+                    <SolidColorBrush x:Key="DangerBackgroundBrush" Color="#2d1b2e"/>
+                    <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="#2d1b1b"/>
+                    <SolidColorBrush x:Key="ProgressTrackBrush" Color="#1a2744"/>
+                    <SolidColorBrush x:Key="ModalOverlayBrush" Color="#80000000"/>
+                    <SolidColorBrush x:Key="UndoBarBrush" Color="#333333"/>
+                    <SolidColorBrush x:Key="BulkBarBrush" Color="#2d1b4e"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#f0f2f5"/>
+                    <SolidColorBrush x:Key="AppPageBackgroundBrush" Color="#e8eaf0"/>
+                    <SolidColorBrush x:Key="AppSurfaceBrush" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="AppCardBrush" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="AppCardHoverBrush" Color="#f5f5f7"/>
+                    <SolidColorBrush x:Key="AppTextBrush" Color="#1a1a2e"/>
+                    <SolidColorBrush x:Key="AppTextSecondaryBrush" Color="#4a5568"/>
+                    <SolidColorBrush x:Key="AppTextMutedBrush" Color="#6b7280"/>
+                    <SolidColorBrush x:Key="AppTextHintBrush" Color="#5a6578"/>
+                    <SolidColorBrush x:Key="AppTextCaptionBrush" Color="#6b7280"/>
+                    <SolidColorBrush x:Key="AccentBrush" Color="#6c63ff"/>
+                    <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="NavInactiveBrush" Color="#e8eaf0"/>
+                    <SolidColorBrush x:Key="GhostHoverBrush" Color="#e8eaf0"/>
+                    <SolidColorBrush x:Key="DangerBrush" Color="#dc2626"/>
+                    <SolidColorBrush x:Key="DangerBackgroundBrush" Color="#fef2f2"/>
+                    <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="#fef2f2"/>
+                    <SolidColorBrush x:Key="ProgressTrackBrush" Color="#e5e7eb"/>
+                    <SolidColorBrush x:Key="ModalOverlayBrush" Color="#80000000"/>
+                    <SolidColorBrush x:Key="UndoBarBrush" Color="#374151"/>
+                    <SolidColorBrush x:Key="BulkBarBrush" Color="#f5f3ff"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://Material.Icons.Avalonia/MaterialIconStyles.axaml" />
+        <StyleInclude Source="avares://TodoApp.Shared/Styles/SharedStyles.axaml" />
+    </Application.Styles>
+</Application>

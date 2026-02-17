@@ -1,0 +1,54 @@
+name: Build and Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Install wasm-tools workload
+        run: dotnet workload install wasm-tools
+
+      - name: Publish Avalonia browser app
+        run: dotnet publish src/TodoApp.Browser/TodoApp.Browser.csproj -c Release
+
+      - name: List publish output
+        run: ls -R src/TodoApp.Browser/bin/Release/net9.0-browser/publish/wwwroot/ | head -80
+
+      - name: Prepare Vercel output
+        run: |
+          mkdir -p .vercel/output/static
+          cp -a src/TodoApp.Browser/bin/Release/net9.0-browser/publish/wwwroot/. .vercel/output/static/
+          echo '{"version":3,"headers":[{"source":"/(.*)","headers":[{"key":"Cross-Origin-Embedder-Policy","value":"require-corp"},{"key":"Cross-Origin-Opener-Policy","value":"same-origin"}]}]}' > .vercel/output/config.json
+
+      - name: Verify output structure
+        run: |
+          echo "=== Static files ==="
+          ls -la .vercel/output/static/
+          echo "=== _framework ==="
+          ls -la .vercel/output/static/_framework/ | head -20
+          echo "=== config.json ==="
+          cat .vercel/output/config.json
+
+      - name: Deploy to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
