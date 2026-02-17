@@ -74,7 +74,7 @@ public partial class MainViewModel : ViewModelBase
         {
             CurrentUser = await _authService.GetCurrentUserAsync() ?? "User";
             IsAuthenticated = true;
-            NavigateToDashboard();
+            await NavigateToDashboardAsync();
         }
         else
         {
@@ -120,27 +120,27 @@ public partial class MainViewModel : ViewModelBase
         {
             CurrentUser = await _authService.GetCurrentUserAsync() ?? "User";
             IsAuthenticated = true;
-            NavigateToDashboard();
+            await NavigateToDashboardAsync();
         });
         CurrentView = loginVm;
     }
 
     [RelayCommand]
-    private void NavigateToDashboard()
+    private async Task NavigateToDashboardAsync()
     {
         SelectedNav = "Dashboard";
         var vm = _serviceProvider.GetRequiredService<DashboardViewModel>();
         CurrentView = vm;
-        _ = vm.InitializeAsync();
+        await vm.InitializeAsync();
     }
 
     [RelayCommand]
-    private void NavigateToStatistics()
+    private async Task NavigateToStatisticsAsync()
     {
         SelectedNav = "Statistics";
         var vm = _serviceProvider.GetRequiredService<StatisticsViewModel>();
         CurrentView = vm;
-        _ = vm.LoadAsync();
+        await vm.LoadAsync();
     }
 
     [RelayCommand]

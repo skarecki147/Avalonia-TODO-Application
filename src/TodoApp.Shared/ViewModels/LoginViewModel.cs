@@ -8,7 +8,7 @@ namespace TodoApp.Shared.ViewModels;
 public partial class LoginViewModel : ViewModelBase
 {
     private readonly IAuthService _authService;
-    private Action? _onLoginSuccess;
+    private Func<Task>? _onLoginSuccess;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
@@ -36,7 +36,7 @@ public partial class LoginViewModel : ViewModelBase
         _authService = authService;
     }
 
-    public void SetLoginCallback(Action onLoginSuccess)
+    public void SetLoginCallback(Func<Task> onLoginSuccess)
     {
         _onLoginSuccess = onLoginSuccess;
     }
@@ -60,7 +60,8 @@ public partial class LoginViewModel : ViewModelBase
 
             if (result.Success)
             {
-                _onLoginSuccess?.Invoke();
+                if (_onLoginSuccess != null)
+                    await _onLoginSuccess.Invoke();
             }
             else
             {
