@@ -12,6 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TrimmerRootAssembly Include="TodoApp.Shared" />
+    <TrimmerRootAssembly Include="TodoApp.Core" />
+    <TrimmerRootAssembly Include="TodoApp.Infrastructure" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Avalonia.Browser" Version="11.3.12" />
   </ItemGroup>
 </Project>
