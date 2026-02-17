@@ -130,8 +130,8 @@ public partial class MainViewModel : ViewModelBase
     {
         SelectedNav = "Dashboard";
         var vm = _serviceProvider.GetRequiredService<DashboardViewModel>();
-        CurrentView = vm;
         await vm.InitializeAsync();
+        CurrentView = vm;
     }
 
     [RelayCommand]
@@ -139,8 +139,8 @@ public partial class MainViewModel : ViewModelBase
     {
         SelectedNav = "Statistics";
         var vm = _serviceProvider.GetRequiredService<StatisticsViewModel>();
-        CurrentView = vm;
         await vm.LoadAsync();
+        CurrentView = vm;
     }
 
     [RelayCommand]

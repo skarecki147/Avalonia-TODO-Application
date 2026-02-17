@@ -2,6 +2,7 @@ using System.Text.Json;
 using TodoApp.Core.Enums;
 using TodoApp.Core.Interfaces;
 using TodoApp.Core.Models;
+using TodoApp.Infrastructure;
 
 namespace TodoApp.Infrastructure.Services;
 
@@ -26,7 +27,7 @@ public class MockTodoService : ITodoService
         {
             try
             {
-                _items = JsonSerializer.Deserialize<List<TodoItem>>(json) ?? new();
+                _items = JsonSerializer.Deserialize(json, TodoJsonContext.Default.ListTodoItem) ?? new();
             }
             catch
             {
@@ -122,7 +123,7 @@ public class MockTodoService : ITodoService
 
     public async Task SaveAsync()
     {
-        var json = JsonSerializer.Serialize(_items);
+        var json = JsonSerializer.Serialize(_items, TodoJsonContext.Default.ListTodoItem);
         await _storage.SetItemAsync(StorageKey, json);
     }
 
